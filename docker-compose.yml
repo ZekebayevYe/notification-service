@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: notifications
+
+  nats:
+    image: nats
+    ports:
+      - "4222:4222"
+
+  notification:
+    build: .
+    depends_on:
+      - mongo
+      - nats
+    environment:
+      - MONGODB_URI=mongodb+srv://erazzzul:HEu9kOvHAQmVpOxa@yera.gfdef.mongodb.net/?retryWrites=true&w=majority&appName=yera
+      - NATS_URL=nats://nats:4222
+      - MAILERSEND_API_KEY=mlsn.34995915cdf755efd82ee29de10f2ccced7ddbeae8aaeaae776e82a651b978cf
+      - GRPC_PORT=50051
+      - CACHE_TTL=5m
+    ports:
+      - "50051:50051"

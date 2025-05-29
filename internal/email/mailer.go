@@ -25,15 +25,25 @@ func (m *Mailer) SendNotification(n app.Notification, to []string) {
 	msg := m.client.Email.NewMessage()
 	msg.SetFrom(mailersend.From{
 		Name:  "Коммунсервис",
-		Email: "no-reply@yourdomain.com",
+		Email: "no-reply@test-z0vklo6n7rxl7qrx.mlsender.net",
 	})
+
+	recipients := make([]mailersend.Recipient, 0, len(to))
 	for _, e := range to {
-		msg.AddRecipient(mailersend.Recipient{Name: "", Email: e})
+		recipients = append(recipients, mailersend.Recipient{
+			Email: e,
+			Name:  "",
+		})
 	}
-	msg.SetSubject(n.Title)
-	msg.SetText(n.Message)
-	msg.SetHTML("<p>" + n.Message + "</p>")
+	msg.Recipients = recipients
+
+	msg.Subject = n.Title
+	msg.Text = n.Message
+	msg.HTML = "<p>" + n.Message + "</p>"
+
 	if _, err := m.client.Email.Send(ctx, msg); err != nil {
 		log.Printf("MailerSend error: %v", err)
 	}
+	log.Println("⏳ Отправляю письмо на:")
+
 }
